@@ -6,21 +6,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static void main(String[] args) throws IOException {
-        System.out.println("Server startup");
+    public static void main(String[] args) {
         int port = 8089;
-        while (true) {
-            ServerSocket serverSocket = new ServerSocket(port);
-            Socket clientS0cket = serverSocket.accept();
-            PrintWriter out = new PrintWriter(clientS0cket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientS0cket.getInputStream()));
+            try (ServerSocket serverSocket = new ServerSocket(port);
+                 Socket clientSocket = serverSocket.accept();
+                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
 
-            System.out.printf("New connection accepted, Port: %d\n", clientS0cket.getPort());
+                System.out.println("New connection accepted");
 
-            final String name = in.readLine();
+                final String name = in.readLine();
 
-            out.println(String.format("Hi %s, your port is %d", name, clientS0cket.getPort()));
-            serverSocket.close();
+                out.println(String.format("Hi %s, your port is %d", name, clientSocket.getPort()));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-}
